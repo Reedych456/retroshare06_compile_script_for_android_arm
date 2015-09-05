@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export RSDIR_TMP=retroshare
+
 echo "Welcome to RS06 compile script! Warning: this script is unstable"
 echo "Updating system and installing needed packages"
 sudo apt-get update
@@ -13,6 +15,8 @@ mkdir build
 cd build
 mkdir lib
 cd lib
+if [ "\$RS06_NOGUI" = "1" ]
+then
 echo "Installing libssh for RS-nogui"
 wget https://red.libssh.org/attachments/download/41/libssh-0.5.4.tar.gz
 tar zxvf libssh-0.5.4.tar.gz
@@ -21,23 +25,43 @@ mkdir build
 cd build
 cmake -DWITH_STATIC_LIB=ON ..
 make
+fi
+
+if [ -n "\$RS06_RSDIR" ]
+then
+echo "Using custom retroshare sources directory"
+echo "Using RS06_RSDIR" > /dev/null
+export RSDIR_TMP=$RS06_RSDIR
+export RS06_DOWNLOAD_RS=0
+fi
+
+if [ "\$RS06_DOWNLOAD_RS" = "1" ]
+then
 echo "Downloading RetroShare"
 cd ~/build
 svn co svn://svn.code.sf.net/p/retroshare/code/trunk retroshare
+fi
+
+if [ "\$RS06_COMPILE_BASE" = "1" ]
+then
 echo "Compiling RetroShare! Your device maybe become laggy"
-cd ~/build/retroshare/libbitdht/src && qmake && make clean && make -j1 && \
-cd ~/build/retroshare/openpgpsdk/src && qmake && make clean && make -j1 && \
-cd ~/build/retroshare/libretroshare/src && qmake && make clean && make -j1 && \
-cd ~/build/retroshare/rsctrl/src && make clean && make && \
-cd ~/build/retroshare/retroshare-nogui/src && qmake && make clean && make -j1 #&& \
-cd ~/build/retroshare/retroshare-gui/src && qmake && make clean && make -j1
-#1. If you want to compile a retroshare-gui uncomment the line above
-cd ~/build/retroshare/retroshare-nogui/src/
-cp retroshare-nogui ~/
-#cd ~/build/retroshare/retroshare-gui/src/
-#cp RetroShare ~/
+cd ~/build/$RSDIR_TMP/libbitdht/src && qmake && make clean && make -j1 && \
+cd ~/build/$RSDIR_TMP/openpgpsdk/src && qmake && make clean && make -j1 && \
+cd ~/build/$RSDIR_TMP/libretroshare/src && qmake && make clean && make -j1 && \
+cd ~/build/$RSDIR_TMP/rsctrl/src && make clean && make
+if [ "\$RS06_COMPILE_NOGUI" = "1" ]
+then
+cd ~/build/$RSDIR_TMP/retroshare-nogui/src && qmake && make clean && make -j1
+cp ~/build/$RSDIR_TMP/retroshare-nogui/src/retroshare-nogui ~/
+fi
+if [ "\$RS06_COMPILE_GUI" = "1" ]
+then
+cd ~/build/$RSDIR_TMP/retroshare-gui/src && qmake && make clean && make -j1
+cp ~/build/$RSDIR_TMP/retroshare-gui/src/RetroShare ~/
+fi
+
 #2. uncomment the lines above too, warning, retroshare-gui is not tested!
 cd ~/
-#./RetroShare-nogui 
+#./RetroShare
 #Retroshare binaries in home directory (~/)
 #For creating this script I used this site: https://blog.cavebeat.org/2013/08/howto-compile-retroshare-on-raspberry-pi/
