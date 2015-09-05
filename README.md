@@ -25,6 +25,7 @@ Necessarily needed to set up variables:
 6. RS06_CPUCORES cpu cores for make (make -j1), default "1"
 
 If you do not want to set up vars, you can use simple config, type this to your terminal:
+
     export RS06_COMPILE_BASE=1
     export RS06_COMPILE_NOGUI=1
     export RS06_COMPILE_GUI=1
