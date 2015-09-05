@@ -8,8 +8,7 @@ echo "Updating system and installing needed packages"
 sudo apt-get update
 sudo apt-get upgrade -y
 sudo apt-get install libglib2.0-dev subversion libupnp-dev qt4-dev-tools libqt4-dev libssl-dev libxss-dev 
-libgnome-keyring-dev libbz2-dev 
-libqt4-opengl-dev libqtmultimediakit1 qtmobility-dev libspeex-dev libspeexdsp-dev libxslt1-dev libcurl4-openssl-dev libopencv-dev tcl8.5 libmicrohttpd-dev
+libgnome-keyring-dev libbz2-dev libqt4-opengl-dev libqtmultimediakit1 qtmobility-dev libspeex-dev libspeexdsp-dev libxslt1-dev libcurl4-openssl-dev libopencv-dev tcl8.5 libmicrohttpd-dev
 echo "Making directories"
 cd ~/
 mkdir build
