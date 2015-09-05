@@ -1,13 +1,19 @@
 #!/bin/bash
 
+echo "Welcome to RS06 compile script! Warning: this script is unstable"
+echo "Updating system and installing needed packages"
 sudo apt-get update
 sudo apt-get upgrade -y
-sudo apt-get install libglib2.0-dev libupnp-dev qt4-dev-tools libqt4-dev libssl-dev libxss-dev libgnome-keyring-dev libbz2-dev libqt4-opengl-dev libqtmultimediakit1 qtmobility-dev libspeex-dev libspeexdsp-dev libxslt1-dev libcurl4-openssl-dev libopencv-dev tcl8.5 libmicrohttpd-dev
+sudo apt-get install libglib2.0-dev subversion libupnp-dev qt4-dev-tools libqt4-dev libssl-dev libxss-dev 
+libgnome-keyring-dev libbz2-dev 
+libqt4-opengl-dev libqtmultimediakit1 qtmobility-dev libspeex-dev libspeexdsp-dev libxslt1-dev libcurl4-openssl-dev libopencv-dev tcl8.5 libmicrohttpd-dev
+echo "Making directories"
 cd ~/
 mkdir build
 cd build
 mkdir lib
 cd lib
+echo "Installing libssh for RS-nogui"
 wget https://red.libssh.org/attachments/download/41/libssh-0.5.4.tar.gz
 tar zxvf libssh-0.5.4.tar.gz
 cd libssh-0.5.4
@@ -15,15 +21,16 @@ mkdir build
 cd build
 cmake -DWITH_STATIC_LIB=ON ..
 make
-sudo apt-get install subversion
+echo "Downloading RetroShare"
 cd ~/build
 svn co svn://svn.code.sf.net/p/retroshare/code/trunk retroshare
+echo "Compiling RetroShare! Your device maybe become laggy"
 cd ~/build/retroshare/libbitdht/src && qmake && make clean && make -j1 && \
 cd ~/build/retroshare/openpgpsdk/src && qmake && make clean && make -j1 && \
 cd ~/build/retroshare/libretroshare/src && qmake && make clean && make -j1 && \
 cd ~/build/retroshare/rsctrl/src && make clean && make && \
 cd ~/build/retroshare/retroshare-nogui/src && qmake && make clean && make -j1 #&& \
-#cd ~/build/retroshare/retroshare-gui/src && qmake && make clean && make -j1
+cd ~/build/retroshare/retroshare-gui/src && qmake && make clean && make -j1
 #1. If you want to compile a retroshare-gui uncomment the line above
 cd ~/build/retroshare/retroshare-nogui/src/
 cp retroshare-nogui ~/
