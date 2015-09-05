@@ -1,5 +1,6 @@
 #!/bin/bash
 
+export RS06_CPUCORES=1
 export RSDIR_TMP=retroshare
 
 echo "Welcome to RS06 compile script! Warning: this script is unstable"
@@ -33,7 +34,10 @@ echo "Using custom retroshare sources directory"
 echo "Using RS06_RSDIR" > /dev/null
 export RSDIR_TMP=$RS06_RSDIR
 export RS06_DOWNLOAD_RS=0
+export RS06_CLONE_RS_GITHUB=0
 fi
+
+cd ~/build
 
 if [ "\$RS06_DOWNLOAD_RS" = "1" ]
 then
@@ -42,21 +46,26 @@ cd ~/build
 svn co svn://svn.code.sf.net/p/retroshare/code/trunk retroshare
 fi
 
+if [ "\$RS06_CLONE_RS_GITHUB" = "1" ]
+then
+git clone https://github.com/RetroShare/RetroShare
+fi
+
 if [ "\$RS06_COMPILE_BASE" = "1" ]
 then
 echo "Compiling RetroShare! Your device maybe become laggy"
-cd ~/build/$RSDIR_TMP/libbitdht/src && qmake && make clean && make -j1 && \
-cd ~/build/$RSDIR_TMP/openpgpsdk/src && qmake && make clean && make -j1 && \
-cd ~/build/$RSDIR_TMP/libretroshare/src && qmake && make clean && make -j1 && \
+cd ~/build/$RSDIR_TMP/libbitdht/src && qmake && make clean && make -j$RS06_CPUCORES && \
+cd ~/build/$RSDIR_TMP/openpgpsdk/src && qmake && make clean && make -j$RS06_CPUCORES && \
+cd ~/build/$RSDIR_TMP/libretroshare/src && qmake && make clean && make -j$RS06_CPUCORES && \
 cd ~/build/$RSDIR_TMP/rsctrl/src && make clean && make
 if [ "\$RS06_COMPILE_NOGUI" = "1" ]
 then
-cd ~/build/$RSDIR_TMP/retroshare-nogui/src && qmake && make clean && make -j1
+cd ~/build/$RSDIR_TMP/retroshare-nogui/src && qmake && make clean && make -j$RS06_CPUCORES
 cp ~/build/$RSDIR_TMP/retroshare-nogui/src/retroshare-nogui ~/
 fi
 if [ "\$RS06_COMPILE_GUI" = "1" ]
 then
-cd ~/build/$RSDIR_TMP/retroshare-gui/src && qmake && make clean && make -j1
+cd ~/build/$RSDIR_TMP/retroshare-gui/src && qmake && make clean && make -j$RS06_CPUCORES
 cp ~/build/$RSDIR_TMP/retroshare-gui/src/RetroShare ~/
 fi
 
@@ -64,4 +73,3 @@ fi
 cd ~/
 #./RetroShare
 #Retroshare binaries in home directory (~/)
-#For creating this script I used this site: https://blog.cavebeat.org/2013/08/howto-compile-retroshare-on-raspberry-pi/
